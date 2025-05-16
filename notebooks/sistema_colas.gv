@@ -1,0 +1,54 @@
+digraph SistemaColas {
+	bgcolor="#f5f5f5" fontname=Arial rankdir=TB size="12,18"
+	Start [label="INICIO
+Configurar sistema:
+- N servidores
+- Tiempo simulación" color="#2E7D32" fillcolor="#4CAF50" shape=ellipse]
+	Init [label="Inicializar:
+- Servidores libres = N
+- Tiempo actual = 0
+- Clientes atendidos = 0" fontname=Arial fontsize=10 penwidth=1.5 style="filled,rounded"]
+	subgraph cluster_servidores {
+		fillcolor="#e8f5e9" label="Gestión de Servidores" style=filled
+		CheckServer [label="¿Servidores libres?" color="#ffc300" fillcolor="#ffec99" shape=diamond style=filled]
+		Assign [label="Asignar servidor
+(Tiempo servicio aleatorio)" color="#2e7d32" fillcolor="#c8e6c9" shape=box style=filled]
+		Release [label="Liberar servidor
+(Fin atención)" color="#2e7d32" fillcolor="#c8e6c9" shape=box style=filled]
+		CheckServer -> Assign [label="Sí"]
+		Assign -> Release
+		CheckServer -> Reject [label=No]
+	}
+	subgraph cluster_simulacion {
+		fillcolor="#e3f2fd" label="Bucle Principal de Simulación" style="rounded,filled"
+		Time [label="Actualizar tiempo simulación
+(t += Δt aleatorio)" fontname=Arial fontsize=10 penwidth=1.5 style="filled,rounded"]
+		Arrival [label="¿Llegada cliente?
+(Probabilidad aleatoria)" color="#ffc300" fillcolor="#ffec99" shape=diamond style=filled]
+		Reject [label="Rechazar cliente
+(sin línea de espera)" fillcolor="#ffcdd2" fontname=Arial fontsize=10 penwidth=1.5 style="filled,rounded"]
+		Time -> Arrival
+		Arrival -> CheckServer [label="Sí"]
+		Arrival -> Time [label=No style=dashed]
+		Release -> Time
+	}
+	End [label="FIN
+Mostrar métricas:
+- Clientes atendidos
+- Clientes rechazados
+- Utilización servidores" color="#B71C1C" fillcolor="#F44336" shape=ellipse]
+	Start -> Init
+	Init -> Time
+	Time -> End [label="Tiempo >= Tiempo simulación"]
+	Reject -> Time [style=dashed]
+	subgraph cluster_legend {
+		fillcolor="#eeeeee" label="Leyenda del Sistema" style="rounded,filled"
+		L1 [label="Tiempos aleatorios:
+- Llegada clientes
+- Duración servicio" shape=note]
+		L2 [label="Política:
+Rechazo inmediato
+cuando todos los
+servidores ocupados" shape=note]
+	}
+}
